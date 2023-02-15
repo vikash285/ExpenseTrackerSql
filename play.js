@@ -6,6 +6,9 @@ const bodyParser = require('body-parser');
 const errorController = require('./controllers/error');
 const sequelize = require('./util/database')
 
+const Product = require('./models/product')
+const udemyUser = require('./models/udemyUser')
+
 const User = require('./models/user')
 const cors = require('cors');
 
@@ -18,47 +21,44 @@ app.set('views', 'views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const userRoutes = require('./routes/user');
 
-app.use(bodyParser.json({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+    udemyUser.findByPk(13)
+    .then(user => {
+        req.udemyUser = user
+        next()
+    })
+    .catch(err => console.log(err))
+})
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
-app.post('/user/add-user', async(req, res, next) => {
-   try {
-
-    if(!req.body.phonenumber) {
-        throw new Error('Phonenumber is mandatory!')
-    }
-    const name = req.body.name;
-    const email = req.body.email;
-    const phonenumber = req.body.phonenumber;
-
-    const data = await User.create({ name: name, email: email, phonenumber: phonenumber })
-    res.status(201).json({ newUserDetail: data })
-   } catch (err) {
-    res.status(500).json({
-        error: err
-    })
-   }
-})
-
-app.get('/user/get-users', async(req, res, next) => {
-    const users = await User.findAll()
-    res.status(200).json({ allUsers: users })
-})
-
-app.delete('/user/delete-user/:id', async(req, res, next) => {
-    const uId = req.params.id
-    await User.destroy({ where: { id: uId }})
-    res.sendStatus(200)
-})
+app.use('/user', userRoutes)
 
 app.use(errorController.get404);
 
-sequelize.sync()
+Product.belongsTo(udemyUser, { constraints: true, onDelete: 'CASCADE'})
+udemyUser.hasMany(Product)
+
+sequelize
+// .sync({ force: true })
+.sync()
 .then(result => {
+    return udemyUser.findByPk(13)
+})
+.then(user => {
+    if (!user) {
+        return udemyUser.create({ name: 'Max', email: 'test@test.com' })
+    }
+    return user
+})
+.then(user => {
+    // console.log(user);
     app.listen(3000);
 })
 .catch(err => console.log(err))
