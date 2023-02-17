@@ -5,9 +5,11 @@ const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
 const sequelize = require('./util/database')
+const sequelizeApp = require('./util/databaseApp')
 
 const User = require('./models/user')
 const Expense = require('./models/expense')
+const UserApp = require('./models/userApp')
 const cors = require('cors');
 
 const app = express();
@@ -21,6 +23,7 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense')
+const userAppRoutes = require('./routes/userApp')
 
 app.use(bodyParser.json({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -30,10 +33,11 @@ app.use(shopRoutes);
 
 app.use('/user', userRoutes)
 app.use('/expense', expenseRoutes)
+app.use('/userApp', userAppRoutes)
 
 app.use(errorController.get404);
 
-sequelize
+sequelizeApp
 // .sync({ force: true })
 .sync()
 .then(result => {
