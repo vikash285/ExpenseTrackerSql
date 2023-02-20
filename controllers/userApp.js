@@ -1,4 +1,5 @@
 const UserApp = require('../models/userApp')
+const bcrypt = require('bcrypt')
 
 function isStringInvalid (string) {
     if (string === undefined || string.length === 0) {
@@ -15,8 +16,11 @@ exports.postSignUp = async(req, res, next) => {
             return res.status(400).json({ err: 'Bad Parameters, Spmething is missing.'})
         }
 
-    const data = await UserApp.create({ name, email, password })
-    res.status(201).json({ message: 'New User Successfully created!' })
+        bcrypt.hash(password, 10, async(err, hash) => {
+            console.log(err)
+            const data = await UserApp.create({ name, email, password: hash })
+            res.status(201).json({ message: 'New User Successfully created!' })
+        })
 } catch (err) {
     res.status(500).json({error: err})
 }
@@ -31,11 +35,16 @@ exports.postLogin = async(req, res, next) => {
 
         const user = await UserApp.findAll({ where: { email }})
         if (user.length > 0) {
-            if (user[0].password === password) {
+            bcrypt.compare(password, user[0].password, (err, response) => {
+                if (err) {
+                    throw new Error('Something went wrong!')
+                }
+            if (response === true) {
                 res.status(200).json({ message: 'User logged in successfully', success: true })
             } else {
                 res.status(400).json({ message: 'Password is incorrect', success: false })
             }
+        })
         } else {
             return res.status(404).json({ message: 'User does not exist', success: false })
         }
