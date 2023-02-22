@@ -11,6 +11,7 @@ const sequelizeApp = require('./util/databaseApp')
 const Expense = require('./models/expense')
 const UserApp = require('./models/userApp')
 const ExpensesApp = require('./models/expensesApp')
+const Order = require('./models/orders')
 const cors = require('cors');
 
 const app = express();
@@ -26,6 +27,7 @@ const shopRoutes = require('./routes/shop');
 const expenseRoutes = require('./routes/expense')
 const userAppRoutes = require('./routes/userApp')
 const expensesAppRoutes = require('./routes/expensesApp')
+const purchaseRoutes = require('./routes/purchase')
 
 app.use(bodyParser.json({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -37,8 +39,15 @@ app.use(shopRoutes);
 app.use('/expense', expenseRoutes)
 app.use('/userApp', userAppRoutes)
 app.use('/expense', expensesAppRoutes)
+app.use('/purchase', purchaseRoutes)
 
 app.use(errorController.get404);
+
+UserApp.hasMany(ExpensesApp)
+ExpensesApp.belongsTo(UserApp)
+
+UserApp.hasMany(Order)
+Order.belongsTo(UserApp)
 
 sequelizeApp
 // .sync({ force: true })
