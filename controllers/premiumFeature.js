@@ -5,22 +5,18 @@ const express = require('express')
 
 exports.getUserLeaderBoard = async(req, res, next) => {
     try {
-      const users = await UserApp.findAll()
-      const expenses = await Expense.findAll()
-      const userAggregatedExpenses = {}
-      expenses.forEach((expense) => {
-        if (userAggregatedExpenses[expense.userAppId]) {
-            userAggregatedExpenses[expense.userAppId] += expense.amount
-        } else {
-            userAggregatedExpenses[expense.userAppId] = expense.amount
-        }
+      const leaderBoardOfUsers = await UserApp.findAll({
+        attributes: ['id', 'name', [sequelizeApp.fn('sum', sequelizeApp.col('expenses.amount')), 'total_cost']],
+        include: [
+          {
+            model: Expense,
+            attributes: []
+          }
+        ],
+        group: ['userApp.id'],
+        order: [['total_cost', 'DESC']]
       })
-      var userLeaderBoardDetails = []
-      users.forEach((user) => {
-        userLeaderBoardDetails.push({ name: user.name, total_cost: userAggregatedExpenses[user.id] || 0 })
-      })
-      userLeaderBoardDetails.sort((a, b) => b.total_cost - a.total_cost)
-      res.status(200).json(userLeaderBoardDetails)
+      res.status(200).json(leaderBoardOfUsers)
     } catch (err) {
         res.status(500).json(err)
     }
