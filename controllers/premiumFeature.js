@@ -6,15 +6,7 @@ const express = require('express')
 exports.getUserLeaderBoard = async(req, res, next) => {
     try {
       const leaderBoardOfUsers = await UserApp.findAll({
-        attributes: ['id', 'name', [sequelizeApp.fn('sum', sequelizeApp.col('expenses.amount')), 'total_cost']],
-        include: [
-          {
-            model: Expense,
-            attributes: []
-          }
-        ],
-        group: ['userApp.id'],
-        order: [['total_cost', 'DESC']]
+        order: [['totalExpenses', 'DESC']]
       })
       res.status(200).json(leaderBoardOfUsers)
     } catch (err) {
