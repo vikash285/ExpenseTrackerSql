@@ -12,10 +12,14 @@ const Expense = require('./models/expense')
 const UserApp = require('./models/userApp')
 const ExpensesApp = require('./models/expensesApp')
 const Order = require('./models/orders')
-const cors = require('cors');
+const cors = require('cors')
+const Forgotpassword = require('./models/forgotPassword')
+const FileUrl = require('./models/fileUrls')
 
 const app = express();
+const dotenv = require('dotenv')
 
+dotenv.config()
 app.use(cors())
 
 app.set('view engine', 'ejs');
@@ -28,6 +32,9 @@ const expenseRoutes = require('./routes/expense')
 const userAppRoutes = require('./routes/userApp')
 const expensesAppRoutes = require('./routes/expensesApp')
 const purchaseRoutes = require('./routes/purchase')
+const premiumFeatureRoutes = require('./routes/premiumFeature')
+const resetPasswordRoutes = require('./routes/resetPassword')
+
 
 app.use(bodyParser.json({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -40,6 +47,8 @@ app.use('/expense', expenseRoutes)
 app.use('/userApp', userAppRoutes)
 app.use('/expense', expensesAppRoutes)
 app.use('/purchase', purchaseRoutes)
+app.use('/premium', premiumFeatureRoutes)
+app.use('/password', resetPasswordRoutes)
 
 app.use(errorController.get404);
 
@@ -48,6 +57,12 @@ ExpensesApp.belongsTo(UserApp)
 
 UserApp.hasMany(Order)
 Order.belongsTo(UserApp)
+
+UserApp.hasMany(Forgotpassword)
+Forgotpassword.belongsTo(UserApp)
+
+UserApp.hasMany(FileUrl)
+FileUrl.belongsTo(UserApp)
 
 sequelizeApp
 // .sync({ force: true })
