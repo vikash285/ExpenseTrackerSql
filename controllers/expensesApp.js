@@ -72,10 +72,25 @@ exports.getFileUrls = async(req, res) => {
     }
 }
 
+const ITEMS_PER_PAGE = 10
 exports.getExpenses = async(req, res, next) => {
     try {
-        const data = await ExpensesApp.findAll({ where: { userAppId: req.userApp.id }})
-        return res.status(200).json({ allExpenses: data })
+        const page = +req.query.page || 1
+        const totalItems = await ExpensesApp.count()
+
+        const data = await ExpensesApp.findAll({ where: { userAppId: req.userApp.id },
+            offset: (page - 1) * ITEMS_PER_PAGE,
+            limit: ITEMS_PER_PAGE
+        })
+        return res.status(200).json({
+             allExpenses: data,
+             currentPage: page,
+             hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+             nextPage: page + 1,
+             hasPreviousPage: page > 1,
+             previousPage: page - 1,
+             lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE) 
+            })
     } catch (err) {
         return res.status(500).json({ message: err, success: false })
     }
