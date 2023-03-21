@@ -1,8 +1,8 @@
 const Sequelize = require('sequelize')
 
-const sequelizeApp = new Sequelize('expense', 'root', '1702@moM', {
+const sequelizeApp = new Sequelize(process.env.DB_NAME, process.env.DB_USER_NAME, process.env.DB_PASSWORD, {
     dialect: 'mysql',
-    host: 'localhost'
+    host: process.env.DB_HOST
 })
 
 module.exports = sequelizeApp
