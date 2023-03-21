@@ -47,6 +47,10 @@ app.use('/purchase', purchaseRoutes)
 app.use('/premium', premiumFeatureRoutes)
 app.use('/password', resetPasswordRoutes)
 
+app.use((req, res) => {
+    res.sendFile(path.join(__dirname, `Public/${req.url}`))
+})
+
 UserApp.hasMany(ExpensesApp)
 ExpensesApp.belongsTo(UserApp)
 
