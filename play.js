@@ -3,11 +3,11 @@ const fs = require('fs')
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const helmet = require('helmet')
-// const compression = require('compression')
-const morgan = require('morgan')
+// const helmet = require('helmet')
+// // const compression = require('compression')
+// const morgan = require('morgan')
 
-const app = express();
+
 const dotenv = require('dotenv')
 
 dotenv.config()
@@ -21,7 +21,7 @@ const cors = require('cors')
 const Forgotpassword = require('./models/forgotPassword')
 const FileUrl = require('./models/fileUrls')
 
-app.use(cors())
+
 
 const userAppRoutes = require('./routes/userApp')
 const expensesAppRoutes = require('./routes/expensesApp')
@@ -29,14 +29,21 @@ const purchaseRoutes = require('./routes/purchase')
 const premiumFeatureRoutes = require('./routes/premiumFeature')
 const resetPasswordRoutes = require('./routes/resetPassword')
 
-const accessLogStream = fs.createWriteStream(
-    path.join(__dirname, 'access.log'),
-    { flags: 'a' }
-)
 
-app.use(helmet())
-// app.use(compression())
-app.use(morgan('combined', { stream: accessLogStream }))
+const app = express();
+
+app.use(cors())
+
+// app.use(express.json())
+
+// const accessLogStream = fs.createWriteStream(
+//     path.join(__dirname, 'access.log'),
+//     { flags: 'a' }
+// )
+
+// app.use(helmet())
+// // app.use(compression())
+// app.use(morgan('combined', { stream: accessLogStream }))
 
 app.use(bodyParser.json({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -48,7 +55,7 @@ app.use('/premium', premiumFeatureRoutes)
 app.use('/password', resetPasswordRoutes)
 
 app.use((req, res) => {
-    res.sendFile(path.join(__dirname, `Public/${req.url}`))
+    res.sendFile(path.join(__dirname, `public/${req.url}`))
 })
 
 UserApp.hasMany(ExpensesApp)
@@ -66,7 +73,7 @@ FileUrl.belongsTo(UserApp)
 sequelizeApp
 // .sync({ force: true })
 .sync()
-.then(result => {
+.then(() => {
     app.listen(3000);
 })
 .catch(err => console.log(err))
