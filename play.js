@@ -1,12 +1,9 @@
+
 const path = require('path');
 const fs = require('fs')
 
 const express = require('express');
 const bodyParser = require('body-parser');
-// const helmet = require('helmet')
-// // const compression = require('compression')
-// const morgan = require('morgan')
-
 
 const dotenv = require('dotenv')
 
@@ -34,17 +31,6 @@ const app = express();
 
 app.use(cors())
 
-// app.use(express.json())
-
-// const accessLogStream = fs.createWriteStream(
-//     path.join(__dirname, 'access.log'),
-//     { flags: 'a' }
-// )
-
-// app.use(helmet())
-// // app.use(compression())
-// app.use(morgan('combined', { stream: accessLogStream }))
-
 app.use(bodyParser.json({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -55,6 +41,7 @@ app.use('/premium', premiumFeatureRoutes)
 app.use('/password', resetPasswordRoutes)
 
 app.use((req, res) => {
+    console.log('url', req.url)
     res.sendFile(path.join(__dirname, `public/${req.url}`))
 })
 
