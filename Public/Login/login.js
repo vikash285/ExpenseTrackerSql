@@ -8,7 +8,7 @@ async function logIn(event) {
             password: event.target.password.value
         }
 
-        const res = await axios.post("http://54.197.207.33:3000/userApp/login", loginDetails)
+        const res = await axios.post("http://52.72.31.169:3000/userApp/login", loginDetails)
         
             alert(res.data.message)
             localStorage.setItem('token', res.data.token)
