@@ -23,7 +23,7 @@ exports.forgotPassword = async (req, res) => {
                 from: 'vikashdhaka285@gmail.com', // Change to your verified sender
                 subject: 'Sending with SendGrid is Fun',
                 text: 'and easy to do anywhere, even with Node.js',
-                html: `<a href="http://52.72.31.169:3000/password/resetPassword/${id}">Reset Password</a>`,
+                html: `<a href="http://54.172.170.232:3000/password/resetPassword/${id}">Reset Password</a>`,
             }
 
             const response = await sgMail.send(msg)

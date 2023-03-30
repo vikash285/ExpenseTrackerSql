@@ -9,7 +9,7 @@ async function signUp(event) {
        }
        console.log(signUpDeatils)
 
-       const res = await axios.post("http://52.72.31.169:3000/userApp/signUp", signUpDeatils)
+       const res = await axios.post("http://54.172.170.232:3000/userApp/signUp", signUpDeatils)
        if (res.status === 201 ) {
            window.location.href = "../Login/login.html"
        } else {
