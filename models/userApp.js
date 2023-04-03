@@ -14,7 +14,9 @@ const UserApp = sequelizeApp.define('userApp', {
         type: Sequelize.STRING,
         unique: true
     },
-    password: Sequelize.STRING
+    password: Sequelize.STRING,
+    isPremiumUser: Sequelize.BOOLEAN,
+    totalExpenses: Sequelize.INTEGER
 })
 
 module.exports = UserApp
