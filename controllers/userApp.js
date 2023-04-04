@@ -28,7 +28,7 @@ const postSignUp = async(req, res, next) => {
 }
 
 const generateAccessToken = (id, name, isPremiumUser) => {
-    return jwt.sign({ userId : id, name: name, isPremiumUser }, process.env.TOKEN_SECRET);
+    return jwt.sign({ userId : id, name: name, isPremiumUser: isPremiumUser }, process.env.TOKEN_SECRET);
 }
 
 const postLogin = async(req, res, next) => {
