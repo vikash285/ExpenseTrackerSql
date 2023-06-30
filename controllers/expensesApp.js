@@ -15,7 +15,7 @@ function isStringInvalid (string) {
 }
 
 
-exports.downloadExpense = async(req, res) => {
+const downloadExpense = async(req, res) => {
     try {
     const expenses = await UserServices.getExpenses(req)
     const stringifiedExpenses = JSON.stringify(expenses)
@@ -30,7 +30,7 @@ exports.downloadExpense = async(req, res) => {
     }
 }
 
-exports.postExpenses = async(req, res, next) => {
+const postExpenses = async(req, res, next) => {
     const t = await sequelizeApp.transaction()
     try {
         const { amount, description, category } = req.body
@@ -53,7 +53,7 @@ exports.postExpenses = async(req, res, next) => {
     }
 }
 
-exports.postFileUrls = async(req, res) => {
+const postFileUrls = async(req, res) => {
     try{
         const { url } = req.body
          const data = await FileUrl.create({ url, userAppId: req.userApp.id })
@@ -63,7 +63,7 @@ exports.postFileUrls = async(req, res) => {
     }
 }
 
-exports.getFileUrls = async(req, res) => {
+const getFileUrls = async(req, res) => {
     try{
         const url = await FileUrl.findAll({ where: { userAppId: req.userApp.id }})
         return res.status(200).json({ allUrls: url })
@@ -73,7 +73,7 @@ exports.getFileUrls = async(req, res) => {
 }
 
 
-exports.getExpenses = async(req, res, next) => {
+const getExpenses = async(req, res, next) => {
     try {
         const ITEMS_PER_PAGE = +req.query.limit || 1
         const page = +req.query.page || 1
@@ -98,7 +98,7 @@ exports.getExpenses = async(req, res, next) => {
     }
 }
 
-exports.deleteExpense = async(req, res, next) => {
+const deleteExpense = async(req, res, next) => {
     try {
     const eId = req.params.id
     const eAmount = req.params.amount
@@ -118,4 +118,8 @@ exports.deleteExpense = async(req, res, next) => {
     } catch (err) {
        return res.status(500).json({ message: err, success: false })
     }
+}
+
+module.exports = {
+    getExpenses, getFileUrls, postExpenses, postFileUrls, deleteExpense, downloadExpense
 }

@@ -25,6 +25,7 @@ exports.purchasePremium = async(req, res, next) => {
 
 exports.updateTransactionStatus = async(req, res, next) => {
     try {
+        const userId = req.userApp.id
        const { payment_id, order_id } = req.body
        const order = await Order.findOne({ where: {orderId: order_id }})
        const Promise1 = order.update({ paymentId: payment_id, status: 'SUCCESSFUL' })
